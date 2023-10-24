@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Session</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px; /* Adjust the max width of the container as needed */
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        label, input, textarea, button {
+            display: block;
+            margin: 10px 0;
+        }
+        #code {
+            width: 100%; /* Set the textarea width to 100% to make it wider */
+            height: 300px; /* Adjust the height as needed */
+            overflow: auto;
+        }
+        #output {
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-height: 200px; /* Set a maximum height for the output box */
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Session</h1>
+        <form id="sessionForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="code">Code:</label>
+            <textarea id="code" name="code" required></textarea>
+            <button type="submit">Submit</button>
+            <div id="output"></div>
+        </form>
+    </div>
+    <script>
+        document.getElementById("sessionForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var name = document.getElementById("name").value;
+            var code = document.getElementById("code").value;
+
+            // Send a POST request to the server
+            fetch("/create-session?name=" + encodeURIComponent(name), {
+                method: "POST",
+                body: code,
+                headers: {
+                    "Content-Type": "text/plain"
+                }
+            })
+            .then(response => response.text())
+            .then(responseText => {
+                var output = document.getElementById("output");
+                output.textContent = responseText;
+                output.style.maxHeight = "200px"; // Adjust the max height as needed
+
+                // Adjust the height to show up to 10 lines
+                var lines = responseText.split('\n');
+                if (lines.length > 10) {
+                    output.style.maxHeight = "calc(1.2em * 10)"; // Calculate the max height for 10 lines
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
